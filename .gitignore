@@ -32,3 +32,6 @@ build/
 
 ### VS Code ###
 .vscode/
+# Auto commit
+.env
+auto_commit.sh
