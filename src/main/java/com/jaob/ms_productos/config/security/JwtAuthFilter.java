@@ -35,9 +35,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String tokenHeader = request.getHeader("Authorization");
         if (!StringUtils.hasText(tokenHeader) || !StringUtils.startsWithIgnoreCase(tokenHeader, "Bearer ")) {
             handleJwtException(response, Constantes.MESSAGE_REQUIRED_TOKEN);
+            return;
         }
         try {
-            AuthData user = getUserInformation(response, tokenHeader);
+            AuthData user = getUserInformation(tokenHeader);
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                     user.getEmail(), null, List.of(new SimpleGrantedAuthority(user.getRol())));
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
@@ -61,10 +62,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         mapper.writeValue(response.getWriter(), customResponse);
     }
 
-    private AuthData getUserInformation(HttpServletResponse response, String token) throws IOException {
+    private AuthData getUserInformation(String token) throws IOException {
         ResponseEntity<AuthResponse> responseEntity = authClient.validateToken(token);
         if (responseEntity == null || responseEntity.getBody() == null || responseEntity.getBody().getData() == null) {
-            handleJwtException(response, Constantes.MESSAGE_REQUIRED_TOKEN);
+            throw new RuntimeException("Unauthorized");
         }
         return responseEntity.getBody().getData();
     }
