@@ -62,7 +62,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         mapper.writeValue(response.getWriter(), customResponse);
     }
 
-    private AuthData getUserInformation(String token) throws IOException {
+    private AuthData getUserInformation(String token) {
         ResponseEntity<AuthResponse> responseEntity = authClient.validateToken(token);
         if (responseEntity == null || responseEntity.getBody() == null || responseEntity.getBody().getData() == null) {
             throw new RuntimeException("Unauthorized");
