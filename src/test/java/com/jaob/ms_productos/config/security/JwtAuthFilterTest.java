@@ -90,6 +90,21 @@ class JwtAuthFilterTest {
     }
 
     @Test
+    void lanzarUnauthorizedWhenBadToken() throws IOException, ServletException {
+        // ARRANGE
+        when(request.getHeader("Authorization")).thenReturn("null");
+
+        StringWriter stringWriter = new StringWriter();
+        PrintWriter printWriter = new PrintWriter(stringWriter);
+        when(response.getWriter()).thenReturn(printWriter);
+        // ACT
+        jwtAuthFilter.doFilterInternal(request, response, filterChain);
+        // ASSERT
+        verify(response).setStatus(HttpStatus.UNAUTHORIZED.value());
+        assertTrue(stringWriter.toString().contains(Constantes.MESSAGE_REQUIRED_TOKEN));
+    }
+
+    @Test
     void lanzarUnauthorizedWhenInvalidToken() throws IOException, ServletException {
         // ARRANGE
         when(request.getHeader("Authorization")).thenReturn(token);
@@ -110,6 +125,37 @@ class JwtAuthFilterTest {
         // ARRANGE
         when(request.getHeader("Authorization")).thenReturn(token);
         when(authClient.validateToken(token)).thenReturn(new ResponseEntity<>(null, HttpStatus.OK));
+
+        StringWriter stringWriter = new StringWriter();
+        PrintWriter printWriter = new PrintWriter(stringWriter);
+        when(response.getWriter()).thenReturn(printWriter);
+        // ACT
+        jwtAuthFilter.doFilterInternal(request, response, filterChain);
+        // ASSERT
+        verify(response).setStatus(HttpStatus.UNAUTHORIZED.value());
+    }
+
+    @Test
+    void lanzarUnauthorizedWhenResponseNull() throws IOException, ServletException {
+        // ARRANGE
+        when(request.getHeader("Authorization")).thenReturn(token);
+        when(authClient.validateToken(token)).thenReturn(null);
+
+        StringWriter stringWriter = new StringWriter();
+        PrintWriter printWriter = new PrintWriter(stringWriter);
+        when(response.getWriter()).thenReturn(printWriter);
+        // ACT
+        jwtAuthFilter.doFilterInternal(request, response, filterChain);
+        // ASSERT
+        verify(response).setStatus(HttpStatus.UNAUTHORIZED.value());
+    }
+
+    @Test
+    void lanzarUnauthorizedWhenAuthDataNull() throws IOException, ServletException {
+        // ARRANGE
+        AuthResponse response1 = new AuthResponse();
+        when(request.getHeader("Authorization")).thenReturn(token);
+        when(authClient.validateToken(token)).thenReturn(ResponseEntity.ok(response1));
 
         StringWriter stringWriter = new StringWriter();
         PrintWriter printWriter = new PrintWriter(stringWriter);
