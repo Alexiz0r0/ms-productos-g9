@@ -148,10 +148,9 @@
 								<exclude>com.jaob.ms_productos.aggregates.response.AuthResponse</exclude>
 								<exclude>com.jaob.ms_productos.aggregates.response.ProductoDTO</exclude>
 								<exclude>com.jaob.ms_productos.aggregates.response.ResponseBase</exclude>
-								<exclude>com.jaob.ms_productos.controller.GlobalExceptionHandler</exclude>
+								<exclude>com.jaob.ms_productos.config.security.SecurityConfig</exclude>
 								<exclude>com.jaob.ms_productos.controller.ProductoController</exclude>
 								<exclude>com.jaob.ms_productos.entity.Producto</exclude>
-								<exclude>com.jaob.ms_productos.exceptions.ResourceNotFoundException</exclude>
 							</excludes>
 						</configuration>
 					</execution>
